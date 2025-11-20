@@ -1,4 +1,5 @@
 import ProductCard from "./ProductCard";
+import boubouImage from "@/assets/boubou-traditionnel.jpg";
 
 // Sample product data - will be replaced with real data later
 const sampleProducts = [
@@ -26,7 +27,7 @@ const sampleProducts = [
     id: "3",
     name: "Boubou Brodé Traditionnel",
     price: 45000,
-    image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&auto=format&fit=crop",
+    image: boubouImage,
     seller: "Couture Fatou",
     location: "Dakar, Médina",
     rating: 4.9,
