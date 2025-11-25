@@ -1,7 +1,8 @@
-import { Search, ShoppingCart, Menu, User, Heart } from "lucide-react";
+import { Search, ShoppingCart, Menu, User, Heart, Phone, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "./Logo";
+import ImageSearch from "./ImageSearch";
 import { useState } from "react";
 
 export default function Header() {
@@ -25,6 +26,7 @@ export default function Header() {
                 className="pl-10 w-full"
               />
             </div>
+            <ImageSearch />
             <Button variant="default" size="default">
               Chercher
             </Button>
@@ -40,6 +42,12 @@ export default function Header() {
               <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-secondary-foreground text-xs flex items-center justify-center font-semibold">
                 0
               </span>
+            </Button>
+            <Button variant="outline" size="sm" className="hidden lg:flex gap-2" asChild>
+              <a href="tel:+221783854465">
+                <Phone className="h-4 w-4" />
+                +221 78 385 44 65
+              </a>
             </Button>
             <Button variant="outline" size="sm" className="hidden md:flex gap-2">
               <User className="h-4 w-4" />
@@ -58,13 +66,16 @@ export default function Header() {
 
         {/* Mobile search */}
         <div className="pb-4 md:hidden">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              type="search" 
-              placeholder="Rechercher..." 
-              className="pl-10 w-full"
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                type="search" 
+                placeholder="Rechercher..." 
+                className="pl-10 w-full"
+              />
+            </div>
+            <ImageSearch />
           </div>
         </div>
 

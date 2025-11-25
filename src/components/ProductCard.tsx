@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, MapPin, Star } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   id: string;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ 
+  id,
   name, 
   price, 
   image, 
@@ -24,9 +26,13 @@ export default function ProductCard({
   reviews = 0 
 }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-border/50">
+    <Card 
+      className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-border/50 cursor-pointer"
+      onClick={() => navigate(`/product/${id}`)}
+    >
       <div className="relative aspect-square overflow-hidden bg-muted">
         <img 
           src={image} 
@@ -39,7 +45,10 @@ export default function ProductCard({
           className={`absolute top-2 right-2 rounded-full bg-white/90 hover:bg-white ${
             isFavorite ? 'text-red-500' : 'text-gray-600'
           }`}
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFavorite(!isFavorite);
+          }}
         >
           <Heart className="h-4 w-4" fill={isFavorite ? 'currentColor' : 'none'} />
         </Button>
@@ -70,7 +79,11 @@ export default function ProductCard({
             </div>
             <div className="text-xs text-muted-foreground">{seller}</div>
           </div>
-          <Button size="sm" className="gap-1">
+          <Button 
+            size="sm" 
+            className="gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ShoppingCart className="h-4 w-4" />
             <span className="hidden sm:inline">Ajouter</span>
           </Button>
