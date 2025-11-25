@@ -1,4 +1,6 @@
+import { useState } from "react";
 import ProductCard from "./ProductCard";
+import ProductFilters, { FilterState } from "./ProductFilters";
 import boubouImage from "@/assets/boubou-traditionnel.jpg";
 
 // Sample product data - will be replaced with real data later
@@ -11,7 +13,8 @@ const sampleProducts = [
     seller: "Marché Sandaga",
     location: "Dakar, Plateau",
     rating: 4.8,
-    reviews: 124
+    reviews: 124,
+    stock: 45
   },
   {
     id: "2",
@@ -21,7 +24,8 @@ const sampleProducts = [
     seller: "Tech House SN",
     location: "Dakar, Liberté 6",
     rating: 4.6,
-    reviews: 89
+    reviews: 89,
+    stock: 12
   },
   {
     id: "3",
@@ -31,7 +35,8 @@ const sampleProducts = [
     seller: "Couture Fatou",
     location: "Dakar, Médina",
     rating: 4.9,
-    reviews: 67
+    reviews: 67,
+    stock: 8
   },
   {
     id: "4",
@@ -41,7 +46,8 @@ const sampleProducts = [
     seller: "Artisan du Sahel",
     location: "Thiès",
     rating: 4.7,
-    reviews: 45
+    reviews: 45,
+    stock: 23
   },
   {
     id: "5",
@@ -51,7 +57,8 @@ const sampleProducts = [
     seller: "Produits du Terroir",
     location: "Kaolack",
     rating: 4.8,
-    reviews: 156
+    reviews: 156,
+    stock: 34
   },
   {
     id: "6",
@@ -61,7 +68,8 @@ const sampleProducts = [
     seller: "Shoes Palace",
     location: "Dakar, Point E",
     rating: 4.5,
-    reviews: 78
+    reviews: 78,
+    stock: 16
   },
   {
     id: "7",
@@ -71,7 +79,8 @@ const sampleProducts = [
     seller: "Délices de Maman",
     location: "Dakar, Ouakam",
     rating: 5.0,
-    reviews: 203
+    reviews: 203,
+    stock: 50
   },
   {
     id: "8",
@@ -81,25 +90,120 @@ const sampleProducts = [
     seller: "Digital Shop",
     location: "Dakar, Almadies",
     rating: 4.7,
-    reviews: 92
+    reviews: 92,
+    stock: 7
   }
 ];
 
 export default function ProductGrid() {
+  const [filters, setFilters] = useState<FilterState>({
+    priceRange: [0, 500000],
+    categories: [],
+    locations: [],
+    minRating: 0,
+    sortBy: "default"
+  });
+
+  const resetFilters = () => {
+    setFilters({
+      priceRange: [0, 500000],
+      categories: [],
+      locations: [],
+      minRating: 0,
+      sortBy: "default"
+    });
+  };
+
+  // Filter products based on current filters
+  const filteredProducts = sampleProducts.filter(product => {
+    // Price filter
+    if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
+      return false;
+    }
+
+    // Category filter
+    if (filters.categories.length > 0) {
+      const categoryMap: Record<string, string> = {
+        "food": "Alimentation",
+        "electronics": "Électronique",
+        "fashion": "Mode",
+        "crafts": "Artisanat",
+        "general": "Général"
+      };
+      const productCategory = Object.entries(categoryMap).find(([_, label]) => 
+        product.seller.toLowerCase().includes(label.toLowerCase())
+      )?.[0];
+      if (!productCategory || !filters.categories.includes(productCategory)) {
+        return false;
+      }
+    }
+
+    // Rating filter
+    if (filters.minRating > 0 && product.rating < filters.minRating) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (filters.sortBy) {
+      case "price-asc":
+        return a.price - b.price;
+      case "price-desc":
+        return b.price - a.price;
+      case "rating":
+        return b.rating - a.rating;
+      default:
+        return 0;
+    }
+  });
+
   return (
     <section className="py-12 bg-background">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-bold mb-2">Produits Populaires</h2>
-            <p className="text-muted-foreground">Découvrez les meilleures offres du moment</p>
+            <p className="text-muted-foreground">
+              {sortedProducts.length} produit{sortedProducts.length > 1 ? 's' : ''} trouvé{sortedProducts.length > 1 ? 's' : ''}
+            </p>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {sampleProducts.map((product) => (
-            <ProductCard key={product.id} {...product} />
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Filters Sidebar */}
+          <div className="lg:col-span-1">
+            <ProductFilters 
+              filters={filters}
+              onFiltersChange={setFilters}
+              onReset={resetFilters}
+            />
+          </div>
+
+          {/* Products Grid */}
+          <div className="lg:col-span-3">
+            {sortedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {sortedProducts.map((product) => (
+                  <ProductCard key={product.id} {...product} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg mb-4">
+                  Aucun produit ne correspond à vos critères
+                </p>
+                <button
+                  onClick={resetFilters}
+                  className="text-primary hover:underline"
+                >
+                  Réinitialiser les filtres
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
