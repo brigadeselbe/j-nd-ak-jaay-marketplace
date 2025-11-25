@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, ShoppingCart, MapPin, Star, ArrowLeft, Phone, Share2, Shield, Truck, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import boubouImage from "@/assets/boubou-traditionnel.jpg";
@@ -70,6 +71,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addToCart } = useCart();
   const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -91,6 +93,16 @@ export default function ProductDetail() {
   }
 
   const handleAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        seller: product.seller,
+        stock: product.stock
+      });
+    }
     toast({
       title: "Ajouté au panier",
       description: `${quantity} x ${product.name}`,

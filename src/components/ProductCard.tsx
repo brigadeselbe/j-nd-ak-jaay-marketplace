@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, MapPin, Star } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   id: string;
@@ -13,6 +15,7 @@ interface ProductCardProps {
   location: string;
   rating?: number;
   reviews?: number;
+  stock?: number;
 }
 
 export default function ProductCard({ 
@@ -23,10 +26,22 @@ export default function ProductCard({
   seller, 
   location, 
   rating = 4.5, 
-  reviews = 0 
+  reviews = 0,
+  stock = 10
 }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart({ id, name, price, image, seller, stock });
+    toast({
+      title: "Produit ajouté",
+      description: `${name} a été ajouté à votre panier`,
+    });
+  };
 
   return (
     <Card 
@@ -82,7 +97,7 @@ export default function ProductCard({
           <Button 
             size="sm" 
             className="gap-1"
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleAddToCart}
           >
             <ShoppingCart className="h-4 w-4" />
             <span className="hidden sm:inline">Ajouter</span>
